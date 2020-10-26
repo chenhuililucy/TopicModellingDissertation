@@ -53,9 +53,9 @@ d=defaultdict(list)
 for files in glob.glob("/Users/lilucy/Desktop/Data-structure-and-Algo-Notes/newdic/*.txt"):
 #alternative: glob.glob(".txt/*"):
     with open(files) as f: 
-        count+=1
-        if count==10000: 
-            break
+        #count+=1
+        #if count==10: 
+            #break
         flist.append(files)
             #files.encode('utf-8').strip()
         lineList = f.readlines()
