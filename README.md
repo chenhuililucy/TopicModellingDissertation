@@ -1,5 +1,5 @@
 
-##1   Introduction 
+## 1   Introduction 
 
 The efficient market hypothesis stipulates that investors consider all available information in their decision making process (Fama, Fisher, Jensen & Roll,1969; Fama 1970). Financial markets in both quantitative and qualitative forms. Recent studies addressed how financial markets respond to the language in newspaper articles (Tetlock, 2007; Tetlock, Saar-Tsechansky & Macskassy, 2008), earnings reports (Loughran & McDonald, 2011), or other types of regulatory disclosures (Hanley & Hoberg, 2012).
 
@@ -22,14 +22,14 @@ I subsequently conduct regression analysis to observe the extracted topics from 
 
 
 
-##2   Methods of Analysis 
+## 2   Methods of Analysis 
 In this section I introduce the tools of textual analysis. I describe the use of machine learning methods and dictionary methods deployed in past literature to perform sentiment analysis on financial text. 
 
-##2.1  Machine Learning Methods 
+## 2.1  Machine Learning Methods 
 
 Machine learning methods in the financial NLP field can be grossly categorized into supervised and unsupervised approaches. Supervised machine learning is the task of learning a function that maps an input to an output. In the context of financial NLP,  supervised learning requires a labeled dataset, whilst unsupervised machine learning looks for previously undetected patterns in data with no existing labels. Supervised machine learning is used for text classification (ie. deciphering whether a sentence/document conveys positive/negative sentiment), whereas unsupervised machine learning is used for topic modelling, categorizing documents with respect to the topics discussed within them or extracting (latent) topics from texts. 
 
-##2.1.1 Literature Review: Supervised Topic Modelling and Sentiment Analysis 
+## 2.1.1 Literature Review: Supervised Topic Modelling and Sentiment Analysis 
 
 Supervised sentiment analysis aims to a lack of annotated domain specific database that is publicly available. Researchers have been making progress on providing academic resources for NLP application of financial news. Malo et al. (2014) trained classifiers to conduct sentence-level semantic analysis for financial news and provided a Financial Phrase Bank consisting of a set of 5,000 sentences, manually annotated by 16 subject experts. This resource was updated by Sinha et al. (2019), who also released an entity-annotated news dataset containing over 12,000 headlines and their related financial sentiment. Oliveira et al. (2016) produced a stock market sentiment lexicon, which includes 20,551 items extracted automatically from microblogs (StockTwits and Twitter)
 
@@ -38,13 +38,13 @@ Researchers have also been looking for ways to differentiate between information
 Gathering labelled data for the task is strenuous and requires the expertise of financial analysts. At present, there is no available tagged dataset for feature engineering. Gooding and Trisboe (2019) used paid data from All Street Research, containing 3097 instances, with categories defined by analysts which they narrowed down to 1824 examples and 11 categories. This study suffered from a small sample size: several categories containing less than 100 examples which meant that they were not enough to train and test. 
 
 
-         ##2.1.2 Literature Review: Latent Dirichlet Allocation
+         2.1.2 Literature Review: Latent Dirichlet Allocation
 
 At a document level, topic modelling may also be conducted via latent dirichlet allocation or cosine similarities. Jin et al (2013), for instance, employed latent dirichlet allocation to reduce Bloomberg news articles into 30 topics and manually aligned them with currency fluctuation so that related topics could be identified. Feuerriegel et al (2016) used LDA to extract 40 topics from German ad-hoc press releases and discovered that some topics significantly affected abnormal returns of stocks.
 
 Hoberg, and Maksimovic (2014) use LDA to extract topics from the MD&A part of corporate 10-K filings and to measure corporate disclosure quality based on the topics extracted. Hanley and Hoberg (2016) identified a list of potential systematic risk through LDA and Semantic Vector Analysis (SVA).  Bao and Datta (2014) use a variation of the LDA model to summarize the risk-related topics contained in the risk disclosure section (section 1A) of corporate 10-K filings. Curme, Preis, Stanley & Moat (2014) use LDA to identify the semantic topics within the large online text corpus of Wikipedia. The identified topics are then used to determine the link between stock market movements and how frequently Internet users search for the most representative words of each identified topic. Huang, Lehavy, Zang & Zheng (2014) employ LDA topic modeling to compare the thematic content of analyst reports and the text narrative of conference calls. Consistent with the information discovery role of analysts, Huang et al. find that analyst reports issued immediately after conference calls contain exclusive topics that were not dis- cussed during the conference calls. Bao & Datta ((2014) discover and quantify the various topics discussed in textual risk disclosures from annual 10-K filings (Item 1A). The results indicate that about two-thirds of the identified risk topics are uninformative to investors, con- sistent with the notion that risk disclosures are largely boilerplate. Of the remaining topics, disclosures of systematic macroeconomic and liquidity risks have an increasing effect on in- vestors’ risk perceptions, whereas topics related to diversifiable risks (i.e., human resources, regulatory changes, information security, and operation disruption) lead to a decrease in investors’ risk perceptions. Dyer, Lang and Lawrence (2016) use LDA to examine specific topics and find that new FASB and SEC requirements explain most of the increase in length of the topics. 
 
-##2.2  Dictionary Methods 
+## 2.2  Dictionary Methods 
 
 A major criticism for the use of machine learning models is the  To enable the extraction of relevant features, 
 
@@ -55,7 +55,7 @@ The Loughran and McDonald dictionary is the most popular dictionary  used in a f
 
 
 
-     ##2.2.1 The Performance Dictionaries
+     2.2.1 The Performance Dictionaries
 
 An “amplifier” enhances the polarity of the finance specific vocabulary that it is attached to (eg. increased, enhanced, booms, surges, acquire, retain, etc), most amplifiers we have selected are unigrams. A “negator”  negates the polarity of the finance specific vocabulary that it is attached to (eg. decreased, reduces, etc). Word in the “bad” category directly makes the polarity of the finance specific vocabulary negative (eg. adverse, constrains, etc). 
 
@@ -63,7 +63,7 @@ The positive performance dictionary consists of financial performance tokens and
 
 The positive and negative performance dictionary consist of financial performance tokens, we have included tokens that have a unique meaning. For instance,  “accounting cost” is not incorporated as “costs” is in our dictionary and “accounting” does not add an additional layer of meaning to “cost”. For the same reasons, keeping“amortization certain” is not meaningful because “certain” does not add to “amortization”. “Advertising budget” is not included  as “advertising” does not add to the polarity of “budget”.  However, “Debt maturities” is relevant because both debt and maturity are significant to the polarity of the phrase  “Expense reimbursements” is relevant because reimbursement alters the meaning of expense. 
 
-     ##2.2.1 The Internal Dictionary
+     2.2.1 The Internal Dictionary
 
  Phrases in the internal dictionary are defined to fall under any one or more of the following categories. 
 
@@ -93,7 +93,7 @@ There may be overlaps between the Loughran and McDonald dictionary and our dicti
 
 
 
-##4  Empirical Strategy Part I: Estimating Topics 
+## 4  Empirical Strategy Part I: Estimating Topics 
 
 
 ##4.1 Vocabulary Selection 
@@ -103,7 +103,7 @@ The matching algorithm is designed to capture the position of “item 7. managem
 I  subsequently perform several processing steps that are common in text mining (Manning and Shütze, 1999). We transform the running text into a matrix notation that would allow for further calculations with Scikitlearn’s vectorizer. First of all, we remove stop words that frequently occur in the English language. We use the default NLTK’s list of English stop words which consists of common, short function words that do not add additional meanings to our text - examples of these are conjunctions and pronouns such as “ourselves”, “her”, and “between”.  
 
 
-##4. 2 Vocabulary Modelling 
+## 4. 2 Vocabulary Modelling 
 
 Statistical Document Model 
 
@@ -124,8 +124,6 @@ LDA assumes that every document will share the same set of topics but exhibit to
 (ii)  Model of LDA 
 
 
-	Fig. Description of each stage of the sampling process
-
 
 𝛂 is the proportion parameter. 
 wnd is the observed variable of words
@@ -141,14 +139,11 @@ A topic, k, denoted by βk ,  is a probability mass function over the entire voc
 We say that the density function of ~Dir(𝛂). The Dirichlet distribution is given by:
 
 
-
 The dirichlet distribution is used because it is conjugate to the multinomial distribution and has finite dimensional sufficient statistics. 
 
 For each topic k ∈ {1,...,K}, we draw a topic proportion βk  from  a Dirichlet Distribution Dir(𝛂). , the K-th dimensional probability vector the dirichlet distribution yields, goes into a multinomial distribution. P (|𝛼𝛼𝛼α) varies with alpha, when alpha is 1, the probability of each outcome is equally likely. As we vary the parameter alpha, we arrive at different points where the multinomial will land. 
 
 
-
-                   Fig. Dirichlet distribution visualization on a 3-Simplex versus multinomial distributions 
 
 The multinomial distribution is a generalization of the binomial function. That is, for n independent trials, each trial is placed into exactly 1 of k categories.  The multinomial distribution models the probability of n independent trials each of which leads to a success for exactly one of k categories. 
 
