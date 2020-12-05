@@ -1,21 +1,24 @@
 
+
+
+'''
+
+Baseline LDA model that graphs document length count
+
+
+'''
+
+
+
 import os 
 import glob
 import re
-import re
-import glob
-import os
 import csv
 import nltk 
 from nltk.corpus import stopwords
 import nltk
 nltk.download('stopwords')
 from nltk.tokenize import word_tokenize
-import re
-import glob
-import os
-import csv
-import nltk 
 from collections import defaultdict
 from collections import Counter
 from nltk.tokenize import sent_tokenize, word_tokenize
@@ -30,108 +33,152 @@ import sys
 import os
 import nltk
 import pandas as pd
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.feature_extraction.text import CountVectorizer
+from operator import itemgetter
+#from sklearn.feature_extraction.text import TfidfVectorizer
+#from sklearn.feature_extraction.text import CountVectorizer
 from gensim.test.utils import common_texts
 from gensim.corpora.dictionary import Dictionary
 from gensim.models import LdaModel
 from itertools import chain
-
-os.chdir("/Users/lilucy/Desktop/Data-structure-and-Algo-Notes/newdic")
-
 import gensim
 from gensim.utils import simple_preprocess
 from gensim import corpora
+import numpy as np
+
 
 
 file=[]
 corpus=[]
 flist=[]#store filenames
+lenlist=[]
+yearlist=[]
+ciklist=[]
 
 count=0
 d=defaultdict(list)
-for files in glob.glob("/Users/lilucy/Desktop/Data-structure-and-Algo-Notes/newdic/*.txt"):
-#alternative: glob.glob(".txt/*"):
-    with open(files) as f: 
-        #count+=1
-        #if count==10: 
-            #break
-        flist.append(files)
-            #files.encode('utf-8').strip()
-        lineList = f.readlines()
-        #if debug1:
-            #print(lineList)
-        lines1="".join(lineList) 
-        lines = re.sub(r'\d', '', lines1)
-        #if debug1:
-            #print(lines)
-        corpus.append(lines)
-        d[lines]=files
 
-        #if debug2:
-            #print(corpus)
-
-texts = [[word for word in document.lower().split() if word not in stopwords.words('english') and word.isalpha()]
-         for document in corpus]
+# modification : store cik, year, filelength
+print("executing")
 
 
-# remove words that appear only once
-all_tokens = sum(texts, [])
-tokens_once = set(word for word in set(all_tokens) if all_tokens.count(word) == 1)
-texts = [[word for word in text if word not in tokens_once] for text in texts]
-
-# Create Dictionary.
-id2word = corpora.Dictionary(texts)
-# Creates the Bag of Word corpus.
-mm = [id2word.doc2bow(text) for text in texts]
-
-
-lda = LdaModel(corpus=mm, id2word=id2word, num_topics=25, \
-                               update_every=1, chunksize=10000, passes=5,minimum_probability=0)
-
-
-lda_corpus = lda[mm]
-
-# Find the threshold, let's set the threshold to be 1/#clusters,
-# To prove that the threshold is sane, we average the sum of all probabilities:
-scores = list(chain(*[[score for topic_id,score in topic] \
-                      for topic in [doc for doc in lda_corpus]]))
-threshold = sum(scores)/len(scores)
-print(threshold)
-
-print(lda_corpus)
-#
-
-# l1=[]
-# l2=[]
-# for n in range(25):
-#     topic_most_pr = lda_corpus[n].argmax()
-#     l1.append(d[n-1])
-#     l2.append(topic_most_pr)
-#     print("doc: {} topic: {}\n".format(d[n+1],topic_most_pr))
-
-#for i in  lda.show_topics():
-    #print i[0], i[1]
+def loaddata():
+    i=0
+    for files in glob.glob("/Users/lichenhuilucy/Desktop/newdic/*.txt"):
+        with open(files) as f: 
+            i+=1
+            if i==500: 
+                break
+            year=files[files.find("-")+1:files.find(".")]
+            year=re.sub("[^0-9]", "", year)
+            cik=files[:files.find("-")]
+            cik=re.sub("[^0-9]", "", cik)
+            yearlist.append(year)
+            ciklist.append(cik)
+            flist.append(files)
+            lineList = f.readlines()
+            lines1="".join(lineList) 
+            lines = re.sub(r'\d', '', lines1)
+            corpus.append(lines)
+            d[lines]=files
+            sent = re.split('(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)(\s|[A-Z].*)',lines)
+            l=len(sent)
+            lenlist.append(l)
 
 
-for word in lda.print_topics(num_words=30): 
-    print(word)
 
-fin=[]
-indexes=[]
-fin2=[]
-for index in range(0,25):
-    cluster1 = [j for i,j in zip(lda_corpus,flist) if i[index][1] > threshold]
-    cluster2 = [i[index][1] for i,j in zip(lda_corpus,flist) if i[index][1] > threshold]
-    for elements in cluster1: 
-        fin.append(elements)
-        indexes.append(index)
-    for e in cluster2:
-        fin2.append(e)
 
-z=zip(fin,indexes,fin2)
+def plotgraph(xs): 
+    xs=np.array(xs)
+    ys=np.array([i for i in range(1994,2019)])
+    plt.plot(xs,ys)
+    plt.show()
+    
 
-with open("LDAtopics.csv","w") as f:
-    fwriter=csv.writer(f)
-    for row in z:
-        fwriter.writerow(row)
+
+def LDAmodel():
+
+    loaddata()
+    texts = [[word for word in document.lower().split() if word not in stopwords.words('english') and word.isalpha()]
+            for document in corpus]
+
+
+    # remove words that appear only once
+    all_tokens = sum(texts, [])
+    tokens_once = set(word for word in set(all_tokens) if all_tokens.count(word) == 1)
+    texts = [[word for word in text if word not in tokens_once] for text in texts]
+
+    # Create Dictionary.
+    id2word = corpora.Dictionary(texts)
+    # Creates the Bag of Word corpus.
+    mm = [id2word.doc2bow(text) for text in texts]
+
+
+    lda = LdaModel(corpus=mm, id2word=id2word, num_topics=25, \
+                                update_every=1, chunksize=10000, passes=5,minimum_probability=0)
+
+    lda_corpus = lda[mm]
+
+    # Find the threshold, let's set the threshold to be 1/#clusters,
+    # To prove that the threshold is sane, we average the sum of all probabilities:
+    scores = list(chain(*[[score for topic_id,score in topic] \
+                        for topic in [doc for doc in lda_corpus]]))
+    threshold = sum(scores)/len(scores)
+    #print(threshold)
+
+    #print(lda_corpus)
+
+    for word in lda.print_topics(num_words=30): 
+        print(word)
+
+    N=25
+
+    fin=[]
+    indexes=[]
+    fin2=[]
+    for index in range(0,N):
+        cluster1 = [j for i,j in zip(lda_corpus,flist) if i[index][1] > threshold] # this is the document name 
+        cluster2 = [i[index][1] for i,j in zip(lda_corpus,flist) if i[index][1] > threshold] # this is the %certainty that we know that a certain document belongs to a certain cluster
+        for elements in cluster1: 
+            fin.append(elements) 
+            indexes.append(index) # this is the cluster name 
+        for e in cluster2:
+            fin2.append(e)
+
+    z=zip(fin,ciklist,yearlist,indexes,fin2,lenlist)
+    z=sorted(z, key=itemgetter(5)) # smallest numbers first
+    z=sorted(z, key=itemgetter(2))
+
+                            
+    with open("LDAtopics.csv","w") as f:
+        fwriter=csv.writer(f)
+        for row in z:
+            fwriter.writerow(row)
+
+
+    # then need the median len
+    cat=[]  # want to be appending sub list to this overall list  
+    # startingyear = 1993 
+    for a in range(1,25): 
+        newlist=[]
+        for i in range(25): 
+            newlist.append([])
+        for b in range(1994,2019): 
+            for i in range(len(z)): #loop through the list for every year and every category
+                print(z[i][3])
+                print(z[i][2])
+                if a==int(z[i][3]) and b==int(z[i][2]): 
+                    print("y")
+                    newlist[b-1994].append(z[i][5])
+        print(newlist)
+        median=[]
+        for sublist in newlist: 
+            if sublist is not None:
+                median.append(np.median(sublist)) # median for each category for each year
+        print(median)
+        plotgraph(median) # plot graph for each category 
+        cat.append(median)
+
+    print(cat)
+
+
+LDAmodel()
