@@ -50,9 +50,7 @@ import numpy as np
 file=[]
 corpus=[]
 flist=[]#store filenames
-lenlist=[]
-yearlist=[]
-ciklist=[]
+
 
 count=0
 d=defaultdict(list)
@@ -66,31 +64,27 @@ def loaddata():
     for files in glob.glob("/Users/lichenhuilucy/Desktop/newdic/*.txt"):
         with open(files) as f: 
             i+=1
-            if i==500: 
+            if i==10000: 
                 break
-            year=files[files.find("-")+1:files.find(".")]
-            year=re.sub("[^0-9]", "", year)
-            cik=files[:files.find("-")]
-            cik=re.sub("[^0-9]", "", cik)
-            yearlist.append(year)
-            ciklist.append(cik)
+
             flist.append(files)
             lineList = f.readlines()
             lines1="".join(lineList) 
             lines = re.sub(r'\d', '', lines1)
             corpus.append(lines)
-            d[lines]=files
             sent = re.split('(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)(\s|[A-Z].*)',lines)
             l=len(sent)
-            lenlist.append(l)
+            d[files]=l           
 
 
-
-
-def plotgraph(xs): 
+def plotgraph(xs,a): 
     xs=np.array(xs)
     ys=np.array([i for i in range(1994,2019)])
-    plt.plot(xs,ys)
+    plt.plot(ys,xs)
+    axes.set_xlabel('Time')
+    axes.set_ylabel('Median Disclosure Length')
+    titlestring="Cluster"+a
+    axes.set_title(titlestring)
     plt.show()
     
 
@@ -144,12 +138,25 @@ def LDAmodel():
         for e in cluster2:
             fin2.append(e)
 
+
+    yearlist=[]
+    ciklist=[]
+    lenlist=[]
+    for files in fin:
+        year=files[files.find("-")+1:files.find(".")]
+        year=re.sub("[^0-9]", "", year)
+        yearlist.append(year)
+        cik=files[:files.find("-")]
+        cik=re.sub("[^0-9]", "", cik)
+        ciklist.append(cik)
+        lenlist.append(d[files])
+
     z=zip(fin,ciklist,yearlist,indexes,fin2,lenlist)
-    z=sorted(z, key=itemgetter(5)) # smallest numbers first
-    z=sorted(z, key=itemgetter(2))
+    #z=sorted(z, key=itemgetter(5)) # smallest numbers first
+    #z=sorted(z, key=itemgetter(2))
 
                             
-    with open("LDAtopics.csv","w") as f:
+    with open("LDAtopics(1).csv","w") as f:
         fwriter=csv.writer(f)
         for row in z:
             fwriter.writerow(row)
@@ -158,7 +165,7 @@ def LDAmodel():
     # then need the median len
     cat=[]  # want to be appending sub list to this overall list  
     # startingyear = 1993 
-    for a in range(1,25): 
+    for a in range(0,25): 
         newlist=[]
         for i in range(25): 
             newlist.append([])
@@ -175,7 +182,7 @@ def LDAmodel():
             if sublist is not None:
                 median.append(np.median(sublist)) # median for each category for each year
         print(median)
-        plotgraph(median) # plot graph for each category 
+        plotgraph(median,a) # plot graph for each category 
         cat.append(median)
 
     print(cat)
