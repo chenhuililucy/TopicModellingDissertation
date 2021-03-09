@@ -69,12 +69,13 @@ def lda():
     for yeardate in range(2000,2002):
         i=0
         corpus=[]
+        flist=[]
         for files in glob.glob("/Users/lichenhuilucy/Desktop/newdic/*.txt"):
 
             
             #if i==100: 
                 #continue
-            
+            flist.append(files)
             if int(re.sub("[^0-9]", "",files[files.find("-")+1:files.find(".")]))==yeardate:
                 i+=1
                 print("y")
