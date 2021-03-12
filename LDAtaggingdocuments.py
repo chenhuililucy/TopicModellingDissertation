@@ -25,6 +25,7 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.tokenize import RegexpTokenizer
 from nltk import ngrams
 import matplotlib.pyplot as plt
+from matplotlib import axes
 from scipy.stats import zipf
 import csv
 import math
@@ -64,7 +65,7 @@ def loaddata():
     for files in glob.glob("/Users/lichenhuilucy/Desktop/newdic/*.txt"):
         with open(files) as f: 
             i+=1
-            if i==10000: 
+            if i==5000: 
                 break
 
             flist.append(files)
@@ -76,18 +77,18 @@ def loaddata():
             l=len(sent)
             d[files]=l           
 
-
+'''
 def plotgraph(xs,a): 
     xs=np.array(xs)
     ys=np.array([i for i in range(1994,2019)])
-    plt.plot(ys,xs)
+    fig, axes = plt.subplots() 
+    axes.plot(ys,xs)
     axes.set_xlabel('Time')
     axes.set_ylabel('Median Disclosure Length')
-    titlestring="Cluster"+a
+    titlestring="Cluster"+str(a)
     axes.set_title(titlestring)
     plt.show()
-    
-
+'''
 
 def LDAmodel():
 
@@ -162,30 +163,88 @@ def LDAmodel():
             fwriter.writerow(row)
 
 
+
+
+def preparedata():
+
+    a1=[]
+    b1=[]
+    c1=[]
+
+    cnt=0
+    fig, axes = plt.subplots() 
+    axes.set_xlabel('Time')
+    axes.set_ylabel('Median Disclosure Length')
+
+
+
+    with open("LDAtopics1.csv","r") as f:
+        freader=csv.reader(f)
+        for row in freader:
+            a1.append(float(row[2])) # year
+            b1.append(int(row[5])) # len
+            c1.append(float(row[3])) # cat
+    l=len(a1)
+    #z=zip(a,b,c)
+    #rint(z)
     # then need the median len
     cat=[]  # want to be appending sub list to this overall list  
     # startingyear = 1993 
     for a in range(0,25): 
+
+
         newlist=[]
         for i in range(25): 
             newlist.append([])
         for b in range(1994,2019): 
-            for i in range(len(z)): #loop through the list for every year and every category
-                print(z[i][3])
-                print(z[i][2])
-                if a==int(z[i][3]) and b==int(z[i][2]): 
-                    print("y")
-                    newlist[b-1994].append(z[i][5])
-        print(newlist)
+            for i in range(l): #loop through the list for every year and every category
+                #print(c1[i])
+                #print(a1[i])
+                if a==c1[i] and b==a1[i]:
+                    #print("y")
+                    newlist[b-1994].append(b1[i])
+        #print(newlist)
         median=[]
         for sublist in newlist: 
             if sublist is not None:
                 median.append(np.median(sublist)) # median for each category for each year
-        print(median)
-        plotgraph(median,a) # plot graph for each category 
+        for i in range(len(median)): 
+            if math.isnan(median[i]): 
+                median[i]=(median[i-1]+median[i+1])/2
+
+        #print(median)
+        ys=np.array([i for i in range(1994,2019)])
+        xs=np.array(median)
+        axes.plot(ys,xs,label="cluster"+str(a))
+
+        if cnt==4:
+            plt.ylim(0,2000)
+            plt.legend()
+            plt.show()
+            cnt+=1
+
+
+        else: 
+            cnt+=1
+
+        if cnt>=5:
+            cnt=0
+            fig, axes = plt.subplots() 
+            axes.set_xlabel('Time')
+            axes.set_ylabel('Median Disclosure Length')
+
+
+    #titlestring="Cluster"+str(a)
+    #axes.set_title(titlestring)
+    
+        #plotgraph(median,a) # plot graph for each category 
         cat.append(median)
 
+
+
     print(cat)
+    print(len(cat))
 
 
-LDAmodel()
+
+preparedata()

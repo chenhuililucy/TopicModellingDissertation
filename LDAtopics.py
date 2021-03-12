@@ -44,26 +44,22 @@ from gensim.utils import simple_preprocess
 
 file=[]
 corpus=[]
+lenlist=[]
 
 d=defaultdict(list)
 i=0
 for files in glob.glob("/Users/lilucy/Desktop/Data-structure-and-Algo-Notes/newdic/*.txt"):
-#alternative: glob.glob(".txt/*"):
     with open(files) as f: 
       i+=1
       d[i]=files
-      print(files)
-        #files.encode('utf-8').strip()
       lineList = f.readlines()
-      #if debug1:
-        #print(lineList)
       lines1="".join(lineList) 
       lines = re.sub(r'\d', '', lines1)
-      #if debug1:
-        #print(lines)
+      sent = re.split('(?<!\w\.\w.)(?<![A-Z][a-z]\.)(?<=\.|\?)(\s|[A-Z].*)',lines)
+      l=len(sent)
+      lenlist.append(l)
       corpus.append(lines)
-      #if debug2:
-        #print(corpus)
+
 
 
 # Initialise the count vectorizer with the English stop words
